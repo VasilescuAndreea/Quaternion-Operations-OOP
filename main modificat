@@ -1,0 +1,211 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+
+using namespace std;
+
+
+class Cuaternion{
+    double real;
+    double ImaginarI;
+    double ImaginarJ;
+    double ImaginarK;
+
+public:
+    Cuaternion(){
+    }
+
+    Cuaternion(double real, double ImaginarI, double ImaginarJ, double ImaginarK)
+    {
+        this->real = real;
+        this->ImaginarI = ImaginarI;
+        this->ImaginarJ = ImaginarJ;
+        this->ImaginarK = ImaginarK;
+    }
+
+    Cuaternion(Cuaternion &cpy) :Cuaternion(cpy.real,  cpy.ImaginarI, cpy.ImaginarJ, cpy.ImaginarK){}
+
+    ~Cuaternion(){
+    }
+
+    void setreal(double real){
+        this->real = real;
+    }
+    void setImaginarI(double setImaginarI){
+        this->ImaginarI = setImaginarI;
+    }
+    void setImaginarJ(double setImaginarJ){
+        this->ImaginarJ = setImaginarJ;
+    }
+    void setImaginarK(double setImaginarK){
+        this->ImaginarK = setImaginarK;
+    }
+
+
+
+    double getreal(){
+        return real;
+    }
+    double getImaginarI(){
+        return ImaginarI;
+    }
+    double getImaginarJ(){
+        return ImaginarJ;
+    }
+    double getImaginarK(){
+        return ImaginarK;
+    }
+
+    string afisare(){
+        string out = "";
+        out += to_string(real);
+        out += afisareParte(ImaginarI, 'i');
+        out += afisareParte(ImaginarJ, 'j');
+        out += afisareParte(ImaginarK, 'k');
+        out += '\n';
+        return out;
+    }
+
+    private: string afisareParte(double parte, char lit){
+        string out = "";
+        if(parte > 0){
+            out = " + " + to_string(parte) + lit;
+        }
+        if(parte < 0){
+            out = " - " + to_string(-parte) + lit;
+        }
+        return out;
+    }
+
+};
+
+Cuaternion operator + (Cuaternion x1, Cuaternion x2){
+    Cuaternion rezultat = Cuaternion(x1.getreal() + x2.getreal(),
+                     x1.getImaginarI() + x2.getImaginarI(),
+                     x1.getImaginarJ() + x2.getImaginarJ(),
+                     x1.getImaginarK() + x2.getImaginarK());
+    return rezultat;
+}
+
+Cuaternion operator - ( Cuaternion x1,  Cuaternion x2){
+    Cuaternion rezultat = Cuaternion(x1.getreal() - x2.getreal(),
+                     x1.getImaginarI() - x2.getImaginarI(),
+                     x1.getImaginarJ() - x2.getImaginarJ(),
+                     x1.getImaginarK() - x2.getImaginarK());
+    return rezultat;
+}
+
+Cuaternion operator * (Cuaternion x1, Cuaternion x2){
+    Cuaternion rezultat = Cuaternion(x1.getreal() * x2.getreal() - x1.getImaginarI() * x2.getImaginarI() - x1.getImaginarJ() * x2.getImaginarJ() - x1.getImaginarK() * x2.getImaginarK(),
+                     x1.getreal() * x2.getImaginarI() + x2.getreal() * x1.getImaginarI() + x1.getImaginarJ() * x2.getImaginarK() - x1.getImaginarK() * x2.getImaginarK(),
+                     x1.getreal() * x2.getImaginarJ() - x1.getImaginarI() * x2.getImaginarK() + x1.getImaginarJ() * x2.getreal() + x1.getImaginarK() * x2.getImaginarI(),
+                     x1.getreal() * x2.getImaginarK() + x1.getImaginarI() * x2.getImaginarJ() - x1.getImaginarJ() * x2.getImaginarI() + x1.getImaginarK() * x2.getreal());
+    return rezultat;
+}
+
+Cuaternion operator * (double d, Cuaternion nr){
+    Cuaternion rezultat = Cuaternion(d * nr.getreal(), d * nr.getImaginarI(), d * nr.getImaginarJ(), d * nr.getImaginarK());
+    return rezultat;
+}
+
+Cuaternion operator / (Cuaternion x1, Cuaternion x2){
+    Cuaternion rezultat = Cuaternion(x1.getreal() * x2.getreal() - x1.getImaginarI() * x2.getImaginarI() - x1.getImaginarJ() * x2.getImaginarJ() - x1.getImaginarK() * x2.getImaginarK(),
+                     x1.getImaginarI() * x2.getreal() + x1.getreal() * x2.getImaginarI() + x1.getImaginarJ() * x2.getImaginarK() - x1.getImaginarK() * x2.getImaginarJ(),
+                     x1.getreal() * x2.getImaginarJ() - x1.getImaginarI() * x2.getImaginarK() + x1.getImaginarJ() * x2.getreal() + x1.getImaginarK() * x2.getImaginarI(),
+                     x1.getreal() * x2.getImaginarK() + x1.getImaginarI() * x2.getImaginarJ() - x1.getImaginarJ() * x2.getImaginarI() + x1.getImaginarK() * x2.getImaginarI());
+    return rezultat;
+}
+
+Cuaternion operator ~ (Cuaternion x1){
+    Cuaternion rezultat = Cuaternion(x1.getreal(), -x1.getImaginarI() , -x1.getImaginarJ(), -x1.getImaginarK());
+    return rezultat;
+}
+
+void operator >> (istream& in, Cuaternion& nr)
+{
+    double value;
+
+    cout << "r:";
+    in>>value;
+    nr.setreal(value);
+
+    cout << "i:";
+    in>>value;
+    nr.setImaginarI(value);
+
+    cout << "j:";
+    in>>value;
+    nr.setImaginarJ(value);
+
+    cout << "k:";
+    in>>value;
+    nr.setImaginarK(value);
+}
+
+ostream& operator << (ostream& out, Cuaternion& nr)
+{
+    out << nr.afisare();
+    return out;
+}
+
+
+int main() {
+    Cuaternion nr1(6, 8, 0, 0);
+    Cuaternion nr2(2, 4, 1, 5);
+    Cuaternion suma, diferenta, produs, impartire, copiere, conjugata;
+
+    cout << "Modulul unui numar cuaternion: ";
+    cout << sqrt(nr1.getreal()*nr1.getreal() + nr1.getImaginarI()*nr1.getImaginarI() + nr1.getImaginarJ() * nr1.getImaginarJ() + nr1.getImaginarK() * nr1.getImaginarK())<<endl;
+
+    suma = nr1 + nr2;
+    cout << "Suma a doua numere cuaternion: ";
+    cout << suma;
+
+    diferenta = nr1 - nr2;
+    cout << "Diferenta a doua numere de tip cuaternion: ";
+    cout << diferenta;
+
+    produs = nr1 * nr2;
+    cout << "Produsul a doua numere cuaternion nr1*nr2: ";
+    cout << produs;
+
+    produs = nr2 * nr1;
+    cout<<" Produsul a doua numere nr2*nr1:";
+    cout<< produs;
+
+    impartire = nr1 / nr2;
+    cout << "Impartirea a doua numere cuaternion: ";
+    cout << impartire;
+
+    conjugata = ~nr1;
+    cout << "Conjugata numarului n1 este: ";
+    cout << conjugata;
+
+    copiere = Cuaternion(suma);
+    cout << copiere;
+
+    /*Cuaternion x = Cuaternion();
+    Cuaternion y = Cuaternion();
+    Cuaternion z = Cuaternion();
+    Cuaternion d = Cuaternion();
+    Cuaternion r = Cuaternion();
+    Cuaternion sol1 = Cuaternion();
+    Cuaternion sol2 = Cuaternion();
+     */
+
+    /* AICI AM VRUT SA FAC SOLUTIILE ECUATIEI, INSA NU AM GASIT FORMULA PENTRU EXTRAGEREA RADACINII PATRATE A UNUI NUMAR DE TIP CUATERNION
+     * CERINTA PE CARE AM INLOCUIT-O ULTERIOR CU CONJUGATA UNUI NUMAR CUATERNION
+    cin >> x;
+    cin >> y;
+    cin >> z;
+    cout << x;
+    d = y*y + (4.0)*x*z;
+    r = sqrt(d);
+    sol1 = ((-1.0)*y+r)/2*x;
+    sol2 = ((-1.0)*y-r)/2*x;
+    cout<<"Solutia 1: "<< sol1<<"endl";
+    cout<<"Solutia 2: "<<sol2;
+    */
+
+    return 0;
+}
